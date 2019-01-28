@@ -217,7 +217,7 @@ html,body {
                 </div>
                 <div class="dialog-footer">
                     <div class="copyright">
-                        <small>email - lonelydawn@sina.com</small>
+                        <small>zhaochensy@gmail.com</small>
                     </div>
                     <div class="btn-group">
                         <button id="send" class="btn-send">Send</button>
@@ -227,7 +227,6 @@ html,body {
         </div>
     </div>
 </div>
-<script type="text/javascript" src="js/bundle.js"></script>
 <div id="jlzsCpn_0_component_0" class=" jlzs-container jlzs-gate" style="width: auto; height: 868px;"></div>
 </body>
 </html>
