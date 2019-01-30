@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @EnableAutoConfiguration
 @MapperScan(basePackages = "com.zc.mapper")
-@ComponentScan(basePackages = {"com.zc.service", "com.zc.web"})
+@ComponentScan(basePackages = {"com.zc.service", "com.zc.web", "com.zc.websocket"})
 public class App 
 {
     public static void main( String[] args )

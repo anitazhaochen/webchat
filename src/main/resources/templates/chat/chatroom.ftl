@@ -193,21 +193,122 @@ html,body {
 .color-blue {
     color: #0d83cb;
 }</style>
+
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.js"></script>
+    <script type="text/javascript">
+        var websocket = null;
+        if ('WebSocket' in window) {
+            websocket = new WebSocket("ws://localhost:8080/ws/socketServer.do");
+        }
+        else if ('MozWebSocket' in window) {
+            websocket = new MozWebSocket("ws://localhost:8080/ws/socketServer.do");
+        }
+        else {
+            websocket = new SockJS("http://localhost:8080/ws/socketServer.do");
+        }
+        websocket.onopen = onOpen;
+        websocket.onmessage = onMessage;
+        websocket.onerror = onError;
+        websocket.onclose = onClose;
+
+        function onOpen(openEvt) {
+            // alert("连接成功");
+        }
+
+        function onMessage(evt) {
+            var obj = JSON.parse(evt.data);
+            if (obj.code == "00") {
+                addUserList(obj);
+            } else if (obj.code == "01"){
+                removeUserList(obj);
+            }else {
+
+            }
+
+        }
+
+
+        function freshMessage(evt) {
+            var para = document.createElement("ul");
+            var node = document.createTextNode(evt.data);
+            para.appendChild(node);
+            var element = document.getElementById("content");
+            element.appendChild(para);
+        }
+
+        function addUserList(obj) {
+            var para = document.createElement("ul");
+            var node = document.createTextNode(obj.username);
+            para.id = obj.id;
+            para.appendChild(node);
+            var element = document.getElementById("userlist");
+            element.appendChild(para);
+        }
+
+        function removeUserList(obj) {
+            var parent=document.getElementById("usrelist");
+            console.log(obj.id);
+            var node = document.getElementById(obj.id);
+            console.log(node);
+            // parent.removeChild(node);
+            node.style.display = "none";
+        }
+
+        function onError() {}
+        function onClose() {}
+
+        function doSendUser() {
+            if (websocket.readyState == websocket.OPEN) {
+                var msg = document.getElementById("inputMsg").value;
+                websocket.send("#anyone#"+msg);//调用后台handleTextMessage方法
+                alert("发送成功!");
+            } else {
+                alert("连接失败!");
+            }
+        }
+
+
+        function doSendUsers() {
+            if (websocket.readyState == websocket.OPEN) {
+                var msg = document.getElementById("msg").value;
+                websocket.send("#everyone#"+msg);//调用后台handleTextMessage方法
+                alert("发送成功!");
+            } else {
+                alert("连接失败!");
+            }
+        }
+
+
+        window.close=function()
+        {
+            websocket.onclose();
+        }
+    </script>
+
 </head>
 <body>
 <div class="container">
     <div class="chat-room">
-        <div class="send-to">
-            <h2>Send To</h2>
+        <div class="send-to" id="userlist">
+            <h2>在线用户</h2>
             <ul id="contact" class="contact-list"></ul>
+            <li id="myself" class="contact-list">${myself}(自己)</li>
+            <#list users as user>
+                <li id="${user.id}" class="contact-list">${user.username}</li>
+            </#list>
         </div>
         <div class="conversation">
             <div class="header">
                 <label for="nickname">Name:</label>
-                <label id="nickname" type="text">${username}</label>
+                <label id="nickname" type="text">${myself}</label>
             </div>
             <div class="dialog">
-                <div id="content" class="dialog-content"></div>
+                <div id="content" class="dialog-content">
+                    <ul >abc 说：</ul>
+                    <ul >大家好</ul>
+
+                </div>
                 <div class="dialog-toolbox">
                     <button class="btn-express cursor-forbid">☺</button>
                 </div>
@@ -220,7 +321,7 @@ html,body {
                         <small>zhaochensy@gmail.com</small>
                     </div>
                     <div class="btn-group">
-                        <button id="send" class="btn-send">Send</button>
+                        <button id="send" class="btn-send" onclick="doSendUsers()">Send</button>
                     </div>
                 </div>
             </div>

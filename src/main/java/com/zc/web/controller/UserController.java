@@ -24,12 +24,11 @@ public class UserController {
 
     @RequestMapping("{id}")
     @ResponseBody
-    public User userinfo(@PathVariable("id") int id) {
+    public User userinfo(@PathVariable("id") String id) {
         User user = new User("zc", "123");
         user.setId(id);
         return user;
     }
-
 
     @Autowired
     private IUserService userService;

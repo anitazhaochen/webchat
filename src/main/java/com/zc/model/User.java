@@ -2,10 +2,18 @@ package com.zc.model;
 
 public class User {
 
-    private int id;
+    private String id;
     private String username;
     private String password;
-    private String address;
+    private String context;
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
+    }
 
     public User(String username) {
         this.username = username;
@@ -19,11 +27,11 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
