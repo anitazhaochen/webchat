@@ -5,15 +5,18 @@ import com.zc.model.User;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatWebSocketHandler implements WebSocketHandler {
 
-
     private static final Map<String, WebSocketSession> USER_SOCKET_MAP;
+    private static final JsonHelper JSON_HELPER;
+
 
     static {
         USER_SOCKET_MAP = new HashMap<String, WebSocketSession>();
+        JSON_HELPER = new JsonHelper();
     }
 
     public ChatWebSocketHandler() {
@@ -36,9 +39,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         message.setCode("00");
         message.setId(id);
         message.setUsername(username);
-        JsonHelper jm = new JsonHelper();
         for (WebSocketSession session : USER_SOCKET_MAP.values()) {
-            TextMessage promptMsg = new TextMessage(jm.toJson(message));
+            TextMessage promptMsg = new TextMessage(JSON_HELPER.toJson(message));
             session.sendMessage(promptMsg);
         }
     }
@@ -49,17 +51,25 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         System.out.println("群发完毕");
     }
 
-    public void sendMessageToAll(WebSocketMessage<?> message,WebSocketSession webSocketSession) throws IOException {
-        String text = (String) message.getPayload();
-        User user = (User) webSocketSession.getAttributes().get("user");
-        user.setContext(text);
-        JsonHelper jm = new JsonHelper();
+    public void sendMessageToAll(WebSocketMessage<?> webSocketMessage,WebSocketSession webSocketSession) throws IOException {
+        String json = (String) webSocketMessage.getPayload();
+        Message message = JSON_HELPER.fromJson(json, Message.class);
+        message.setId(getUserId(webSocketSession));
+        message.setUsername(getUsername(webSocketSession));
+        message.setSendDate(getCurrentTime());
         for (WebSocketSession session : USER_SOCKET_MAP.values()) {
             if (webSocketSession != session) {
-                TextMessage promptMsg = new TextMessage(jm.toJson(user));
+                TextMessage promptMsg = new TextMessage(JSON_HELPER.toJson(message));
                 session.sendMessage(promptMsg);
             }
         }
+    }
+
+    private String getCurrentTime() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date ss = new Date();
+        String time = format.format(ss.getTime());
+        return time;
     }
 
     @Override
@@ -77,10 +87,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         USER_SOCKET_MAP.remove(id);
         Message message = new Message();
         message.setId(id);
-        JsonHelper jm = new JsonHelper();
         message.setCode("01");
         for (WebSocketSession session : USER_SOCKET_MAP.values()) {
-            TextMessage promptMsg = new TextMessage(jm.toJson(message));
+            TextMessage promptMsg = new TextMessage(JSON_HELPER.toJson(message));
             session.sendMessage(promptMsg);
         }
         System.out.println("下线执行完毕");

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        System.out.println("拦截");
+        System.out.println("登录拦截");
         if (httpServletRequest.getSession().getAttribute("user") != null) {
             return true;
         }

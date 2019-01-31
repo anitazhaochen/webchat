@@ -222,18 +222,27 @@ html,body {
                 addUserList(obj);
             } else if (obj.code == "01"){
                 removeUserList(obj);
-            }else {
+            }else if (obj.code == "10") {
+                addMessageToAll(obj);
+            }else if (obj.code == "11") {
+
+            }else if (obj.code == "12") {
+
+            } else {
 
             }
-
         }
 
 
-        function freshMessage(evt) {
-            var para = document.createElement("ul");
-            var node = document.createTextNode(evt.data);
+        function addMessageToAll(obj) {
+            var para = document.createElement("p");
+            var node = document.createTextNode(obj.sendDate + " "+ obj.username+" 说：");
             para.appendChild(node);
             var element = document.getElementById("content");
+            element.appendChild(para);
+            para = document.createElement("p");
+            node = document.createTextNode(obj.context);
+            para.appendChild(node);
             element.appendChild(para);
         }
 
@@ -261,8 +270,8 @@ html,body {
         function doSendUser() {
             if (websocket.readyState == websocket.OPEN) {
                 var msg = document.getElementById("inputMsg").value;
-                websocket.send("#anyone#"+msg);//调用后台handleTextMessage方法
-                alert("发送成功!");
+                websocket.send(msg);//调用后台handleTextMessage方法
+                // alert("发送成功!");
             } else {
                 alert("连接失败!");
             }
@@ -272,18 +281,51 @@ html,body {
         function doSendUsers() {
             if (websocket.readyState == websocket.OPEN) {
                 var msg = document.getElementById("msg").value;
-                websocket.send("#everyone#"+msg);//调用后台handleTextMessage方法
-                alert("发送成功!");
+                websocket.send(
+                    JSON.stringify({
+                        context: msg,
+                        code : "10",
+                }));//调用后台handleTextMessage方法
+                // alert("发送成功!");
             } else {
                 alert("连接失败!");
             }
-        }
+            var para = document.createElement("p");
+            var time = (new Date()).Format("yyyy-MM-dd hh:mm");
+            var node = document.createTextNode(time + " (自己) 说：");
+            para.appendChild(node);
+            var element = document.getElementById("content");
+            element.append(para);
+            para = document.createElement("p");
+            node = document.createTextNode(msg);
+            para.appendChild(node);
+            element.appendChild(para);
 
+            // 清空 输入框
+            document.getElementById("msg").value = "";
+        }
 
         window.close=function()
         {
             websocket.onclose();
         }
+
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
     </script>
 
 </head>
@@ -305,9 +347,7 @@ html,body {
             </div>
             <div class="dialog">
                 <div id="content" class="dialog-content">
-                    <ul >abc 说：</ul>
-                    <ul >大家好</ul>
-
+                    <p ></p>
                 </div>
                 <div class="dialog-toolbox">
                     <button class="btn-express cursor-forbid">☺</button>

@@ -7,9 +7,19 @@ public class Message {
     private String id;
     private String context;
     private String username;
-    private Date sendDate;
+    private String sendDate;
     private String code;
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id='" + id + '\'' +
+                ", context='" + context + '\'' +
+                ", username='" + username + '\'' +
+                ", sendDate=" + sendDate +
+                ", code='" + code + '\'' +
+                '}';
+    }
 
     public String getId() {
         return id;
@@ -35,11 +45,11 @@ public class Message {
         this.username = username;
     }
 
-    public Date getSendDate() {
+    public String getSendDate() {
         return sendDate;
     }
 
-    public void setSendDate(Date sendDate) {
+    public void setSendDate(String sendDate) {
         this.sendDate = sendDate;
     }
 
