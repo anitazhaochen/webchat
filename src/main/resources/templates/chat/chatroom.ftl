@@ -197,20 +197,28 @@ html,body {
     <script type="text/javascript" src="http://cdn.bootcss.com/jquery/3.1.0/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.js"></script>
     <script type="text/javascript">
+        document.onkeydown=function(event){
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            if(e.shiftKey && e.keyCode==13){ // enter 键
+                //要做的事情
+                doSendUsers()
+            }
+        };
+
         var websocket = null;
         if ('WebSocket' in window) {
             websocket = new WebSocket("ws://localhost:8080/ws/socketServer.do");
-        }
-        else if ('MozWebSocket' in window) {
+        } else if ('MozWebSocket' in window) {
             websocket = new MozWebSocket("ws://localhost:8080/ws/socketServer.do");
-        }
-        else {
+        } else {
             websocket = new SockJS("http://localhost:8080/ws/socketServer.do");
         }
+        window.webSocket = websocket;
         websocket.onopen = onOpen;
         websocket.onmessage = onMessage;
         websocket.onerror = onError;
         websocket.onclose = onClose;
+
 
         function onOpen(openEvt) {
             // alert("连接成功");
@@ -236,12 +244,16 @@ html,body {
 
         function addMessageToAll(obj) {
             var para = document.createElement("p");
-            var node = document.createTextNode(obj.sendDate + " "+ obj.username+" 说：");
+            var node = document.createTextNode(obj.sendDate + " "+ obj.username+" ：");
             para.appendChild(node);
             var element = document.getElementById("content");
             element.appendChild(para);
             para = document.createElement("p");
-            node = document.createTextNode(obj.context);
+            node =document.createElement("span");
+            var contexts = obj.context.replace(/\r\n/g,'<br>');
+            contexts = contexts.replace(/\n/g,"<br>");
+            console.log(contexts);
+            node.innerHTML = contexts;
             para.appendChild(node);
             element.appendChild(para);
         }
@@ -256,12 +268,12 @@ html,body {
         }
 
         function removeUserList(obj) {
-            var parent=document.getElementById("usrelist");
+            var parent=document.getElementById("userlist");
             console.log(obj.id);
             var node = document.getElementById(obj.id);
             console.log(node);
-            // parent.removeChild(node);
-            node.style.display = "none";
+            parent.removeChild(node);
+            // node.style.display = "none";
         }
 
         function onError() {}
@@ -292,14 +304,13 @@ html,body {
             }
             var para = document.createElement("p");
             var time = (new Date()).Format("yyyy-MM-dd hh:mm");
-            var node = document.createTextNode(time + " (自己) 说：");
+            var node = document.createTextNode(time + " (自己) ：");
             para.appendChild(node);
             var element = document.getElementById("content");
             element.append(para);
-            para = document.createElement("p");
-            node = document.createTextNode(msg);
-            para.appendChild(node);
-            element.appendChild(para);
+            node = document.createElement("span");
+            node.innerHTML = msg.replace(/\r\n/g, "<br>").replace(/\n/g,"<br>");
+            element.appendChild(node);
 
             // 清空 输入框
             document.getElementById("msg").value = "";
@@ -361,13 +372,15 @@ html,body {
                         <small>zhaochensy@gmail.com</small>
                     </div>
                     <div class="btn-group">
-                        <button id="send" class="btn-send" onclick="doSendUsers()">Send</button>
+                        <button id="send" class="btn-send" onclick="doSendUsers()">发送</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <p>邀请其他人加入${sharecode}</p>
+    <p>Shift+Enter 快捷发送</p>
 </div>
-<div id="jlzsCpn_0_component_0" class=" jlzs-container jlzs-gate" style="width: auto; height: 868px;"></div>
+<#--<div id="jlzsCpn_0_component_0" class=" jlzs-container jlzs-gate" style="width: auto; height: 868px;"></div>-->
 </body>
 </html>

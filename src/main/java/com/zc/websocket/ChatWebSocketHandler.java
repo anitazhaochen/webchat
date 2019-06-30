@@ -107,7 +107,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         List<User> list = new ArrayList<>();
         for (WebSocketSession session : USER_SOCKET_MAP.values()) {
             User user = (User) session.getAttributes().get("user");
-            list.add(user);
+                list.add(user);
         }
         return list;
     }

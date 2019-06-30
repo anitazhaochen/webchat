@@ -61,4 +61,11 @@ public class UserController {
         return username;
     }
 
+    @RequestMapping("index")
+    public String index(HttpServletRequest request, HttpServletResponse response) {
+
+        return "index";
+
+    }
+
 }

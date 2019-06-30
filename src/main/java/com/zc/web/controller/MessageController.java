@@ -13,30 +13,29 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-@Controller
-@EnableAutoConfiguration
-@RequestMapping("chat")
+//@Controller
+//@EnableAutoConfiguration
+//@RequestMapping("chat")
 public class MessageController {
 
-    @RequestMapping("{username}")
-    public String userIndex(@PathVariable("username") User user, Model model, HttpServletRequest request) {
-        String uuid = UUID.randomUUID().toString();
-        user.setId(uuid);
-        request.getSession().setAttribute("user", user);
-        List<User> list = ChatWebSocketHandler.getOnlineUsers();
-        model.addAttribute("users", list);
-        model.addAttribute("myself", user.getUsername());
-        //System.out.println("index执行了");
-        return "chat/chatroom";
-    }
+//    @RequestMapping("{username}")
+//    public String userIndex(@PathVariable("username") User user, Model model, HttpServletRequest request) {
+//        String uuid = UUID.randomUUID().toString();
+//        user.setId(uuid);
+//        request.getSession().setAttribute("user", user);
+//        List<User> list = ChatWebSocketHandler.getOnlineUsers();
+//        model.addAttribute("users", list);
+//        model.addAttribute("myself", user.getUsername());
+//        //System.out.println("index执行了");
+//        return "chat/chatroom";
+//    }
 
-    @RequestMapping("reveive")
-    @ResponseBody
-    public Map<String, Object> receiveMessage(Message message) {
-        MessageServiceImpl messageService = new MessageServiceImpl();
-        messageService.save(message);
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("code", 0);
-        return map;
-    }
+//    @ResponseBody
+//    public Map<String, Object> receiveMessage(Message message) {
+//        MessageServiceImpl messageService = new MessageServiceImpl();
+//        messageService.save(message);
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("code", 0);
+//        return map;
+//    }
 }
